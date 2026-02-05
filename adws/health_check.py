@@ -62,11 +62,11 @@ class HealthCheckResult(BaseModel):
 def check_env_vars() -> CheckResult:
     """Check required environment variables."""
     required_vars = {
-        "ANTHROPIC_API_KEY": "Anthropic API Key for Claude Code",
         "CLAUDE_CODE_PATH": "Path to Claude Code CLI (defaults to 'claude')",
     }
 
     optional_vars = {
+        "ANTHROPIC_API_KEY": "(Optional) Anthropic API Key - uses Claude subscription if not set",
         "GITHUB_PAT": "(Optional) GitHub Personal Access Token - only needed if you want ADW to use a different GitHub account than 'gh auth login'",
         "E2B_API_KEY": "(Optional) E2B API Key for sandbox environments",
         "CLOUDFLARED_TUNNEL_TOKEN": "(Optional) Cloudflare tunnel token for webhook exposure",
@@ -169,7 +169,7 @@ def check_claude_code() -> CheckResult:
             "-p",
             test_prompt,
             "--model",
-            "claude-3-5-haiku-20241022",
+            "claude-3-haiku-20240307",
             "--output-format",
             "stream-json",
             "--verbose",
@@ -291,19 +291,13 @@ def run_health_check() -> HealthCheckResult:
         if gh_check.error:
             result.errors.append(gh_check.error)
 
-    # Check Claude Code - only if we have the API key
-    if os.getenv("ANTHROPIC_API_KEY"):
-        claude_check = check_claude_code()
-        result.checks["claude_code"] = claude_check
-        if not claude_check.success:
-            result.success = False
-            if claude_check.error:
-                result.errors.append(claude_check.error)
-    else:
-        result.checks["claude_code"] = CheckResult(
-            success=False,
-            details={"skipped": True, "reason": "ANTHROPIC_API_KEY not set"},
-        )
+    # Check Claude Code (works with subscription auth or API key)
+    claude_check = check_claude_code()
+    result.checks["claude_code"] = claude_check
+    if not claude_check.success:
+        result.success = False
+        if claude_check.error:
+            result.errors.append(claude_check.error)
 
     return result
 
@@ -365,8 +359,9 @@ def main():
     # Print next steps
     if not result.success:
         print("\n📝 Next Steps:")
-        if any("ANTHROPIC_API_KEY" in e for e in result.errors):
-            print("   1. Set ANTHROPIC_API_KEY in your .env file")
+        if any("Claude Code" in e for e in result.errors):
+            print("   1. Ensure Claude Code is installed and you are logged in (claude login)")
+            print("      Or set ANTHROPIC_API_KEY in your .env file for API-key auth")
         if any("GITHUB_PAT" in e for e in result.errors):
             print("   2. Set GITHUB_PAT in your .env file")
         if any("GitHub CLI" in e for e in result.errors):

@@ -3,7 +3,13 @@
     "allow": [
       "Bash(git remote:*)",
       "Bash(git init:*)",
-      "Bash(pip install:*)"
+      "Bash(pip install:*)",
+      "Bash(source:*)",
+      "Bash(echo:*)",
+      "Bash(claude -p \"What is 2+2? Just respond with the number, nothing else.\" --model claude-3-haiku-20240307 --output-format stream-json --verbose --dangerously-skip-permissions)",
+      "Bash(claude:*)",
+      "Bash(python -c \"from agent import prompt_claude_code; print\\(''import ok''\\)\")",
+      "Bash(python -c:*)"
     ]
   }
 }

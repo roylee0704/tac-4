@@ -81,54 +81,6 @@ def convert_jsonl_to_json(jsonl_file: str) -> str:
     return json_file
 
 
-def get_claude_env() -> Dict[str, str]:
-    """Get only the required environment variables for Claude Code execution.
-    
-    Returns a dictionary containing only the necessary environment variables
-    based on .env.sample configuration.
-    
-    Subprocess env behavior:
-    - env=None → Inherits parent's environment (default)
-    - env={} → Empty environment (no variables)
-    - env=custom_dict → Only uses specified variables
-    
-    So this will work with gh authentication:
-    # These are equivalent:
-    result = subprocess.run(cmd, capture_output=True, text=True)
-    result = subprocess.run(cmd, capture_output=True, text=True, env=None)
-    
-    But this will NOT work (no PATH, no auth):
-    result = subprocess.run(cmd, capture_output=True, text=True, env={})
-    """
-    required_env_vars = {
-        # Anthropic Configuration (required)
-        "ANTHROPIC_API_KEY": os.getenv("ANTHROPIC_API_KEY"),
-        
-        # Claude Code Configuration
-        "CLAUDE_CODE_PATH": os.getenv("CLAUDE_CODE_PATH", "claude"),
-        "CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR": os.getenv("CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR", "true"),
-        
-        # Agent Cloud Sandbox Environment (optional)
-        "E2B_API_KEY": os.getenv("E2B_API_KEY"),
-        
-        # Basic environment variables Claude Code might need
-        "HOME": os.getenv("HOME"),
-        "USER": os.getenv("USER"),
-        "PATH": os.getenv("PATH"),
-        "SHELL": os.getenv("SHELL"),
-        "TERM": os.getenv("TERM"),
-    }
-    
-    # Only add GitHub tokens if GITHUB_PAT exists
-    github_pat = os.getenv("GITHUB_PAT")
-    if github_pat:
-        required_env_vars["GITHUB_PAT"] = github_pat
-        required_env_vars["GH_TOKEN"] = github_pat  # Claude Code uses GH_TOKEN
-    
-    # Filter out None values
-    return {k: v for k, v in required_env_vars.items() if v is not None}
-
-
 def save_prompt(prompt: str, adw_id: str, agent_name: str = "ops") -> None:
     """Save a prompt to the appropriate logging directory."""
     # Extract slash command from prompt
@@ -179,14 +131,13 @@ def prompt_claude_code(request: AgentPromptRequest) -> AgentPromptResponse:
     if request.dangerously_skip_permissions:
         cmd.append("--dangerously-skip-permissions")
 
-    # Set up environment with only required variables
-    env = get_claude_env()
-
     try:
         # Execute Claude Code and pipe output to file
+        # env=None inherits the full parent environment, allowing Claude Code
+        # to use either subscription auth (~/.claude/) or ANTHROPIC_API_KEY
         with open(request.output_file, "w") as f:
             result = subprocess.run(
-                cmd, stdout=f, stderr=subprocess.PIPE, text=True, env=env
+                cmd, stdout=f, stderr=subprocess.PIPE, text=True
             )
 
         if result.returncode == 0:

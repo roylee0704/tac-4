@@ -22,8 +22,8 @@ Workflow:
 5. Create PR with full context
 
 Environment Requirements:
-- ANTHROPIC_API_KEY: Anthropic API key
 - CLAUDE_CODE_PATH: Path to Claude CLI
+- ANTHROPIC_API_KEY: (Optional) Anthropic API key - if not set, uses Claude subscription auth
 - GITHUB_PAT: (Optional) GitHub Personal Access Token - only if using a different account than 'gh auth login'
 """
 
@@ -61,7 +61,6 @@ AGENT_PR_CREATOR = "pr_creator"
 def check_env_vars(logger: Optional[logging.Logger] = None) -> None:
     """Check that all required environment variables are set."""
     required_vars = [
-        "ANTHROPIC_API_KEY",
         "CLAUDE_CODE_PATH",
     ]
     missing_vars = [var for var in required_vars if not os.getenv(var)]
