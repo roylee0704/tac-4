@@ -1,0 +1,3 @@
+{"order_id": 1, "customer": "Alice", "items": [{"id": 101, "name": "Laptop", "price": 999.99, "specs": {"cpu": "Intel i7", "ram": "16GB"}}, {"id": 102, "name": "Mouse", "price": 29.99, "specs": {"wireless": true}}]}
+{"order_id": 2, "customer": "Bob", "items": [{"id": 201, "name": "Monitor", "price": 299.99, "specs": {"size": "27inch", "resolution": "4K"}}, {"id": 202, "name": "Keyboard", "price": 89.99, "specs": {"mechanical": true, "rgb": true}}]}
+{"order_id": 3, "customer": "Charlie", "items": [{"id": 301, "name": "Desk", "price": 399.99, "specs": {"material": "wood", "height_adjustable": true}}]}

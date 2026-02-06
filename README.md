@@ -5,10 +5,11 @@ A web application that converts natural language queries to SQL using AI, built 
 ## Features
 
 - 🗣️ Natural language to SQL conversion using OpenAI or Anthropic
-- 📁 Drag-and-drop file upload (.csv and .json)
+- 📁 Drag-and-drop file upload (.csv, .json, and .jsonl)
 - 📊 Interactive table results display
 - 🔒 SQL injection protection
 - ⚡ Fast development with Vite and uv
+- 🔄 Automatic flattening of nested JSON structures (objects and arrays)
 
 ## Prerequisites
 
@@ -83,8 +84,11 @@ npm run dev
 
 1. **Upload Data**: Click "Upload Data" to open the modal
    - Use sample data buttons for quick testing
-   - Or drag and drop your own .csv or .json files
+   - Or drag and drop your own .csv, .json, or .jsonl files
    - Uploading a file with the same name will overwrite the existing table
+   - **Nested data handling**: JSON and JSONL files with nested objects and arrays are automatically flattened:
+     - Nested objects use double underscore delimiter: `user.address.city` → `user__address__city`
+     - Array elements use underscore with index: `items[0].name` → `items_0__name`
 2. **Query Your Data**: Type a natural language query like "Show me all users who signed up last week"
    - Press `Cmd+Enter` (Mac) or `Ctrl+Enter` (Windows/Linux) to run the query
 3. **View Results**: See the generated SQL and results in a table format
@@ -135,7 +139,7 @@ npm run preview            # Preview production build
 
 ## API Endpoints
 
-- `POST /api/upload` - Upload CSV/JSON file
+- `POST /api/upload` - Upload CSV/JSON/JSONL file
 - `POST /api/query` - Process natural language query
 - `GET /api/schema` - Get database schema
 - `POST /api/insights` - Generate column insights
@@ -192,9 +196,10 @@ uv run pytest tests/test_sql_injection.py -v
 ### Additional Security Features
 
 - CORS configured for local development only
-- File upload validation (CSV and JSON only)
+- File upload validation (CSV, JSON, and JSONL only)
 - Comprehensive error logging without exposing sensitive data
 - Database operations are isolated with proper connection handling
+- JSONL parsing validates and sanitizes all field names to prevent injection attacks
 
 ## Troubleshooting
 

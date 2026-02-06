@@ -1,0 +1,5 @@
+{"id": 1, "name": "Record One", "field_a": "value_a"}
+{"id": 2, "name": "Record Two", "field_b": "value_b", "field_c": 123}
+{"id": 3, "name": "Record Three", "field_a": "another_a", "field_d": true}
+{"id": 4, "field_e": [1, 2, 3], "nested": {"deep": {"value": "test"}}}
+{"id": 5, "name": "Record Five", "field_a": "final_a", "field_b": "final_b", "field_c": 456}
