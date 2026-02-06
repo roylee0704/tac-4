@@ -1,0 +1,5 @@
+{"id": 1, "event_type": "login", "timestamp": "2024-01-15T10:30:00Z", "user_id": 101}
+{"id": 2, "event_type": "page_view", "timestamp": "2024-01-15T10:31:00Z", "user_id": 101}
+{"id": 3, "event_type": "logout", "timestamp": "2024-01-15T11:00:00Z", "user_id": 101}
+{"id": 4, "event_type": "login", "timestamp": "2024-01-15T14:00:00Z", "user_id": 102}
+{"id": 5, "event_type": "purchase", "timestamp": "2024-01-15T14:30:00Z", "user_id": 102}
